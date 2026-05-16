@@ -35,3 +35,8 @@ sequenceDiagram
 ## Investigator plugin contract
 
 Each investigator implements `supports(entity)` and `investigate(entity) -> list[Finding]`. Findings may contain entities and relationships. The engine is responsible for storage, deduplication, and recursive queueing.
+
+## Repository backends
+
+- `memory` is intended for unit tests and single-process demos.
+- `postgres` persists investigation state, entities, deduplicated relationships, and serialized findings for multi-process FastAPI/Celery deployments.

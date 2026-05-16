@@ -43,7 +43,7 @@ Services:
 2. FastAPI persists the investigation and enqueues the root entity.
 3. Celery workers invoke the recursive engine.
 4. Investigators return findings, relationships, and candidate entities.
-5. The engine normalizes entities, calculates confidence, records graph edges, indexes findings, and queues new entities up to configured depth.
+5. The engine normalizes entities, calculates confidence, records graph edges, persists entities/findings/relationships, and queues new entities up to configured depth.
 6. The dashboard polls and visualizes status, timeline, and graph relationships.
 
 ## Repository layout
@@ -63,4 +63,5 @@ sample-data/             Safe synthetic investigation dataset
 - Dark-web connector is disabled unless `ENABLE_DARK_WEB=true` and policies pass.
 - No credential stuffing, scraping behind authentication, exploit code, or bypass logic.
 - Confidence scoring tracks provenance and investigator reliability.
+- Docker deployments use `REPOSITORY_BACKEND=postgres` so API and Celery workers share durable investigation state; local tests can keep the in-memory backend.
 - Synthetic local JSONL indexes demonstrate breach/dark-web metadata workflows without secret material or illicit access.

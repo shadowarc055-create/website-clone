@@ -3,9 +3,10 @@
 ## Local Docker Compose
 
 1. Copy `.env.example` to `.env`.
-2. Keep `QUEUE_MODE=inline` for local single-process development, or set `QUEUE_MODE=celery` when using durable worker execution with a shared persistent repository.
-3. Run `docker compose up --build`.
-3. Pull an Ollama model if local summarization is required: `docker compose exec ollama ollama pull llama3.1`.
+2. Keep `QUEUE_MODE=inline` for local single-process development, or set `QUEUE_MODE=celery` when using durable worker execution.
+3. Use `REPOSITORY_BACKEND=postgres` whenever API and workers run in separate processes so queued work can share investigation state.
+4. Run `docker compose up --build`.
+5. Pull an Ollama model if local summarization is required: `docker compose exec ollama ollama pull llama3.1`.
 
 ## Kubernetes
 

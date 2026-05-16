@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from uuid import UUID
 
+from app.core.config import get_settings
 from app.engine.normalization import entity_key
 from app.models.schemas import Entity, Finding, GraphEdge, GraphNode, GraphResponse, Investigation, InvestigationStatus, Relationship
 
@@ -73,4 +74,15 @@ class InMemoryInvestigationRepository(InvestigationRepository):
         return GraphResponse(nodes=nodes, edges=edges)
 
 
-repository = InMemoryInvestigationRepository()
+def create_repository() -> InvestigationRepository:
+    settings = get_settings()
+    if settings.repository_backend == "postgres":
+        from app.storage.sql_repository import SqlInvestigationRepository
+
+        return SqlInvestigationRepository(settings.database_url)
+    if settings.repository_backend != "memory":
+        raise ValueError(f"Unsupported repository backend: {settings.repository_backend}")
+    return InMemoryInvestigationRepository()
+
+
+repository = create_repository()
