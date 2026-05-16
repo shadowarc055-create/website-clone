@@ -1,0 +1,7 @@
+{
+  "type": "email",
+  "value": "analyst@example.com",
+  "max_depth": 2,
+  "min_confidence": 0.35,
+  "legal_basis": "synthetic sample dataset"
+}

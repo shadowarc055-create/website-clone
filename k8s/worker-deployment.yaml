@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osint-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: osint-worker }
+  template:
+    metadata:
+      labels: { app: osint-worker }
+    spec:
+      containers:
+        - name: worker
+          image: osint-api:latest
+          command: ["celery", "-A", "app.queue.celery_app.celery_app", "worker", "-Q", "investigations", "--loglevel=INFO"]
+          envFrom: [{ secretRef: { name: osint-secrets } }]

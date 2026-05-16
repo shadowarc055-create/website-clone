@@ -1,0 +1,15 @@
+{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0 },
+  "mappings": {
+    "properties": {
+      "investigator": { "type": "keyword" },
+      "title": { "type": "text" },
+      "summary": { "type": "text" },
+      "confidence": { "type": "float" },
+      "source_url": { "type": "keyword" },
+      "observed_at": { "type": "date" },
+      "entities.type": { "type": "keyword" },
+      "entities.normalized": { "type": "keyword" }
+    }
+  }
+}
