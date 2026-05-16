@@ -30,4 +30,4 @@ Returns chronological findings for analyst review.
 
 ## `POST /api/investigations/{id}/reports`
 
-Generates JSON reports in-process. PDF report generation is intended for worker deployment.
+Generates JSON reports or PDF reports (`{"format":"pdf"}`) with confidence caveats and finding summaries.

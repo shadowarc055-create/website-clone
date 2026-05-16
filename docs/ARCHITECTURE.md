@@ -27,6 +27,8 @@ sequenceDiagram
 - Queue items contain entity, depth, and parent key.
 - `visited` is keyed by normalized entity type and value.
 - Entities below `min_confidence` are stored but not pivoted.
+- Queue deduplication tracks already queued entities as well as visited entities to avoid duplicate work during broad fan-out.
+- Deterministic scoring blends investigator reliability, finding confidence, validation metadata, source URLs, and policy blocks before optional LLM explanation.
 - Processing stops when the queue drains or the configured depth limit is reached.
 - Stabilization is reached when no new eligible entities remain.
 

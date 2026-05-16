@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"
     enable_dark_web: bool = False
+    breach_index_path: str | None = None
+    dark_web_index_path: str | None = None
+    queue_mode: str = "inline"
     max_recursion_depth: int = 3
     min_confidence_to_pivot: float = 0.35
 

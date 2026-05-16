@@ -63,3 +63,4 @@ sample-data/             Safe synthetic investigation dataset
 - Dark-web connector is disabled unless `ENABLE_DARK_WEB=true` and policies pass.
 - No credential stuffing, scraping behind authentication, exploit code, or bypass logic.
 - Confidence scoring tracks provenance and investigator reliability.
+- Synthetic local JSONL indexes demonstrate breach/dark-web metadata workflows without secret material or illicit access.

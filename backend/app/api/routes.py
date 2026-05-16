@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Response
+
+from app.core.config import get_settings
 
 from app.ai.ollama import OllamaClient
 from app.engine.normalization import make_entity
 from app.engine.recursive import RecursiveInvestigationEngine
 from app.investigators import DEFAULT_INVESTIGATORS
 from app.models.schemas import GraphResponse, Investigation, InvestigationCreate, InvestigationStatus, InvestigationSummary, ReportRequest
-from app.reports.generator import generate_json_report
+from app.reports.generator import generate_json_report, generate_pdf_report
 from app.storage.repositories import repository
 
 router = APIRouter(prefix="/api", tags=["investigations"])
@@ -20,7 +22,12 @@ async def create_investigation(payload: InvestigationCreate, background_tasks: B
     root = make_entity(payload.value, payload.type, confidence=1.0, source="user")
     investigation = Investigation(root_entity=root, max_depth=payload.max_depth, min_confidence=payload.min_confidence)
     await repository.create(investigation)
-    background_tasks.add_task(_run_investigation, investigation.id)
+    if get_settings().queue_mode == "celery":
+        from app.queue.tasks import run_investigation
+
+        run_investigation.delay(str(investigation.id))
+    else:
+        background_tasks.add_task(_run_investigation, investigation.id)
     return investigation
 
 
@@ -51,14 +58,18 @@ async def get_timeline(investigation_id: UUID) -> list[dict]:
 
 
 @router.post("/investigations/{investigation_id}/reports")
-async def create_report(investigation_id: UUID, request: ReportRequest) -> dict:
+async def create_report(investigation_id: UUID, request: ReportRequest) -> dict | Response:
     investigation = await repository.get(investigation_id)
     if investigation is None:
         raise HTTPException(status_code=404, detail="Investigation not found")
-    if request.format != "json":
-        raise HTTPException(status_code=501, detail="PDF rendering is wired for worker deployment; JSON is available in-process")
     findings = await repository.list_findings(investigation_id)
     graph = await repository.graph(investigation_id)
+    if request.format == "pdf":
+        return Response(
+            content=generate_pdf_report(investigation, findings, graph),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=investigation-{investigation_id}.pdf"},
+        )
     return generate_json_report(investigation, findings, graph)
 
 

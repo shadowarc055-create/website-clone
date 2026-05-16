@@ -3,7 +3,8 @@
 ## Local Docker Compose
 
 1. Copy `.env.example` to `.env`.
-2. Run `docker compose up --build`.
+2. Keep `QUEUE_MODE=inline` for local single-process development, or set `QUEUE_MODE=celery` when using durable worker execution with a shared persistent repository.
+3. Run `docker compose up --build`.
 3. Pull an Ollama model if local summarization is required: `docker compose exec ollama ollama pull llama3.1`.
 
 ## Kubernetes
@@ -16,3 +17,7 @@ The `k8s/` directory contains starter manifests for API, worker, and frontend de
 - Store source provenance and legal basis for auditability.
 - Keep `ENABLE_DARK_WEB=false` unless your organization has approved indexes and legal review.
 - Rate-limit all external connectors and honor robots.txt and provider terms.
+
+## Local intelligence indexes
+
+Mount legally obtained JSONL metadata indexes and set `BREACH_INDEX_PATH` or `DARK_WEB_INDEX_PATH`. Each line should contain an `entity` field, optional `related` pivots, provenance fields, and confidence. The bundled sample data is synthetic.
